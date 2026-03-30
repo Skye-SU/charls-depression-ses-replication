@@ -1,43 +1,47 @@
-# Quantitative Replication Study: Geriatric Depression and SES in China
+# CHARLS 2011 Empirical Replication (Lei et al. 2014)
 
-This repository contains an independent, full-pipeline quantitative replication of the highly cited empirical paper by **Lei et al. (2014)** regarding the socioeconomic correlates of depressive symptoms among the elderly in China.
+![CES-D Distribution](output/figure1_cesd_histogram_final.png)
 
-> **Target Paper:** Lei, X., Sun, X., Strauss, J., Zhang, P., & Zhao, Y. (2014). Depressive symptoms and SES among the mid-aged and elderly in China: Evidence from the China Health and Retirement Longitudinal Study national baseline. *Social Science & Medicine*, 120, 224-232.
+## Overview
+This repository contains a full **Phase 1 to Phase 4 modular academic replication pipeline** based on the highly cited paper: 
+> *Lei, X., Sun, X., Strauss, J., Zhang, P., & Zhao, Y. (2014). Depressive symptoms and SES among the mid-aged and elderly in China: Evidence from the China Health and Retirement Longitudinal Study national baseline. Social Science & Medicine, 120, 224-232.*
 
-## 🎯 Project Objective
+This project was built to demonstrate proficiency in handling large-scale micro-survey data (CHARLS), performing stringent demographic filtering, constructing complex sociodemographic scales (CES-D 10, PCE), and running heteroskedasticity-consistent regression analyses.
 
-The primary goal of this project is to demonstrate **end-to-end quantitative research capabilities**, including:
-- Processing and merging complex, large-scale microdata survey panels (`.dta` format).
-- Constructing validated psychological scales (10-item CES-D) from raw questionnaire responses.
-- Executing robust econometric modeling (OLS regressions with robust standard errors).
-- Generating publication-ready data visualizations using Python (Pandas/Statsmodels/Matplotlib).
+## Pipeline Architecture
 
-## 📊 Data Source
+The pipeline is split into four strict, decoupled steps matching a standard Research Assistant workflow:
 
-This replication uses the **CHARLS 2011 National Baseline**.
-Due to data use agreements, the raw microdata is not included in this repository.
+### 1. `src/01_data_cleaning.py` (Data Engineering)
+- Extracts and strictly merges across four CHARLS baseline modules (`demographic_background`, `health_status_and_functioning`, `biomarker`, `weight`).
+- Core Filters: `Age >= 45`, dropping unmatched spouses (Final N = 17,222).
+- CES-D 10 scale reverse-scoring logic and SES mapping (Education splines, PCE, Rural Hukou).
 
-To run the replication locally, the following modules must be placed in the `data/` directory:
-- `demographic_background.dta`
-- `health_status_and_functioning.dta`
-- `weight.dta`
-- `PSU.dta`
+### 2. `src/02_descriptive_stats.py` (Validation & Reliability)
+- Validates the target sample summary statistics (Appendix Table 2).
+- Calculates cross-gender baseline differences matching target distributions (Male Mean = ~7.46, Female Mean = ~9.46).
 
-## 📈 Key Findings & Visualization
+### 3. `src/03_regression_analysis.py` (Modeling)
+- Replicates standard OLS cross-sectional models using `statsmodels`.
+- Employs **Heteroskedasticity-Consistent (HC3)** standard errors. 
+- Models CES-D scores against incremental controls: demographic, economic (PCE), and geographic baselines.
 
-The replication script successfully reproduces the core findings of the target paper, validating the strong gender disparity in geriatric depression in China.
+### 4. `src/04_visualization.py` (Reporting)
+- Reconstructs Figure 1 from the paper.
+- Uses `matplotlib`/`seaborn` to render publication-grade overlapping density plots visualizing depression trajectories across gender strata.
 
-- **Male High-Depression Rate**: ~30%
-- **Female High-Depression Rate**: ~43%
-- **Education/SES Matrix**: Negative and robustly significant correlations between higher education and CES-D scores.
+## Setup & Execution
 
-![CES-D Score Distribution and OLS Coefficients](output/figure1_cesd_distribution.png)
-*(Fig 1. Left: Replicated CES-D Score distribution by gender. Right: Baseline OLS Regression)*
+```bash
+# Provide raw CHARLS .dta modules in the /data folder
+pip install -r requirements.txt
 
-## 🚀 How to Run
+# Run the pipeline sequentially
+python src/01_data_cleaning.py
+python src/02_descriptive_stats.py
+python src/03_regression_analysis.py
+python src/04_visualization.py
+```
 
-1. Clone this repository.
-2. Ensure you have Python 3.8+ installed.
-3. Install dependencies: `pip install -r requirements.txt`
-4. Place the required CHARLS `.dta` files into the `data/` directory.
-5. Execute the replication pipeline: `python src/replication.py`
+## Disclaimer
+This is an independent empirical exercise built for research portfolio purposes. Original dataset belongs to the China Health and Retirement Longitudinal Study (CHARLS) administered by Peking University.

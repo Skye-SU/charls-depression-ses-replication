@@ -1,0 +1,32 @@
+                      OLS Regression Results                      
+Dep. Variable:   ,cesd_score      ,  R-squared:         ,   0.081 
+Model:           ,OLS             ,  Adj. R-squared:    ,   0.080 
+Method:          ,Least Squares   ,  F-statistic:       ,   86.79 
+Date:            ,Tue, 31 Mar 2026,  Prob (F-statistic):,1.00e-103
+Time:            ,01:08:41        ,  Log-Likelihood:    , -50800. 
+No. Observations:, 15706          ,  AIC:               ,1.016e+05
+Df Residuals:    , 15694          ,  BIC:               ,1.017e+05
+Df Model:        ,    11          ,                     ,         
+Covariance Type: ,cluster         ,                     ,         
+               ,   coef   , std err ,    z    ,P>|z| ,  [0.025 ,  0.975] 
+Intercept      ,    3.1994,    1.981,    1.615, 0.106,   -0.683,    7.082
+age            ,    0.2093,    0.063,    3.302, 0.001,    0.085,    0.334
+age_sq         ,   -0.0014,    0.001,   -2.829, 0.005,   -0.002,   -0.000
+female         ,    1.3166,    0.102,   12.944, 0.000,    1.117,    1.516
+edu_primary    ,   -1.2110,    0.168,   -7.228, 0.000,   -1.539,   -0.883
+edu_middle     ,   -2.1321,    0.187,  -11.400, 0.000,   -2.499,   -1.766
+edu_high       ,   -3.5750,    0.224,  -15.989, 0.000,   -4.013,   -3.137
+rural_hukou    ,    1.0067,    0.393,    2.559, 0.011,    0.236,    1.778
+married        ,   -1.3338,    0.157,   -8.494, 0.000,   -1.642,   -1.026
+widowed        ,    0.4117,    0.604,    0.681, 0.496,   -0.773,    1.596
+log_pce        ,   -0.0305,    0.039,   -0.773, 0.440,   -0.108,    0.047
+chronic_disease,   -0.1609,    0.105,   -1.531, 0.126,   -0.367,    0.045
+Omnibus:      ,1128.369,  Durbin-Watson:     ,   1.585 
+Prob(Omnibus):, 0.000  ,  Jarque-Bera (JB):  ,1387.818 
+Skew:         , 0.725  ,  Prob(JB):          ,4.36e-302
+Kurtosis:     , 3.129  ,  Cond. No.          ,1.36e+05 
+
+Notes:
+[1] Standard Errors are robust to cluster correlation (cluster)
+[2] The condition number is large, 1.36e+05. This might indicate that there are
+strong multicollinearity or other numerical problems.
