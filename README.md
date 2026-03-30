@@ -23,7 +23,7 @@ The pipeline is split into four strict, decoupled steps matching a standard Rese
 
 ### 3. `src/03_regression_analysis.py` (Modeling)
 - Replicates standard OLS cross-sectional models using `statsmodels`.
-- Employs **Heteroskedasticity-Consistent (HC3)** standard errors. 
+- Employs **Community-level Clustered Standard Errors** to correctly account for geographic sampling logic.
 - Models CES-D scores against incremental controls: demographic, economic (PCE), and geographic baselines.
 
 ### 4. `src/04_visualization.py` (Reporting)
