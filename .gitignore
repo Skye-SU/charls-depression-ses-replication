@@ -1,0 +1,17 @@
+# Data files (CHARLS microdata is restricted-access)
+data/
+
+# Legacy exploration scripts (not part of the main pipeline)
+explore_vars.py
+replicate_lei2014.py
+replicate_lei2014_phase2.py
+replicate_lei2014_phase2_fixed.py
+var_meta.json
+
+# System files
+__pycache__/
+*.pyc
+.DS_Store
+
+# Output column info (internal reference only)
+output/column_info.json

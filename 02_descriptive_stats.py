@@ -1,11 +1,13 @@
 import pandas as pd
 import numpy as np
 import os
+from pathlib import Path
 
-print("=== Phase 3: Descriptive Statistics & Reliability ===")
+print("=== Phase 2: Descriptive Statistics & Reliability ===")
 
-INP = "/Users/xiwen/.gemini/antigravity/scratch/intelligence/charls_replication/data/cleaned_charls_phase1.csv"
-OUT = "/Users/xiwen/.gemini/antigravity/scratch/intelligence/charls_replication/output"
+PROJECT_DIR = Path(__file__).resolve().parent
+INP = str(PROJECT_DIR / "data/cleaned_charls_phase1.csv")
+OUT = str(PROJECT_DIR / "output")
 os.makedirs(OUT, exist_ok=True)
 
 df = pd.read_csv(INP)

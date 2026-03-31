@@ -2,11 +2,14 @@ import pandas as pd
 import numpy as np
 import pyreadstat
 import os
+from pathlib import Path
 
-print("=== CHARLS 2011 Replication: Phase 1 Advanced Data Cleaning ===")
+print("=== CHARLS 2011 Replication: Phase 1 — Data Cleaning ===")
 
-BASE = "/Users/xiwen/Documents/Career_Job/大厂简历/RA投递材料包/定量统计/CHARLS"
-OUT = "/Users/xiwen/.gemini/antigravity/scratch/intelligence/charls_replication/data"
+# Configure CHARLS raw data path (update this to your local CHARLS directory)
+BASE = os.environ.get("CHARLS_DATA", str(Path.home() / "Documents/CHARLS"))
+PROJECT_DIR = Path(__file__).resolve().parent
+OUT = str(PROJECT_DIR / "data")
 os.makedirs(OUT, exist_ok=True)
 
 # 1. Load Datasets
@@ -16,17 +19,20 @@ health, _ = pyreadstat.read_dta(f"{BASE}/health_status_and_functioning/health_st
 
 try:
     psu, _ = pyreadstat.read_dta(f"{BASE}/PSU/psu.dta")
-except:
+except FileNotFoundError:
+    print("  ⚠ PSU module not found, using empty fallback.")
     psu = pd.DataFrame({'communityID': demo['communityID'].unique(), 'urban_nbs': 0})
 
 try:
     biomarker, _ = pyreadstat.read_dta(f"{BASE}/biomarker/biomarker.dta")
-except:
+except FileNotFoundError:
+    print("  ⚠ Biomarker module not found, lower_leg_length will be unavailable.")
     biomarker = pd.DataFrame({'ID': demo['ID']})
 
 try:
     family, _ = pyreadstat.read_dta(f"{BASE}/family_information/family_information.dta")
-except:
+except FileNotFoundError:
+    print("  ⚠ Family module not found, family shock variables will be unavailable.")
     family = pd.DataFrame({'ID': demo['ID']})
 
 print("Merging data on ID...")
@@ -110,33 +116,41 @@ if 'be001' in df.columns:
     df['widowed'] = (df['marital_raw'] == 4).astype(float)
     df['never_married'] = (df['marital_raw'] == 6).astype(float)
 
-# NEW: LOG-PCE SPLINE
-np.random.seed(42)
-df['log_pce'] = np.random.normal(9.5, 1.2, size=len(df)) # Placeholder for PCE
-pce_median = df['log_pce'].median()
-df['log_pce_low'] = np.minimum(df['log_pce'], pce_median)
-df['log_pce_high'] = np.maximum(df['log_pce'] - pce_median, 0)
+# TODO: Extract real PCE from CHARLS household_income module.
+# The household_income .dta contains consumption expenditure data.
+# Steps: (1) Load household_income module, (2) Compute per-capita expenditure,
+# (3) Take log, (4) Construct piecewise linear spline at median.
+# For now, these columns are set to NaN to clearly mark them as unprocessed.
+df['log_pce'] = np.nan
+df['log_pce_low'] = np.nan
+df['log_pce_high'] = np.nan
 
 # Table 4, 5, 6 Endogenous controls
+# Lower leg length from biomarker module (variable qi012)
 if 'qi012' in df.columns:
     df['lower_leg_length'] = pd.to_numeric(df['qi012'], errors='coerce')
 else:
-    df['lower_leg_length'] = np.random.normal(38.0, 3.0, size=len(df))
+    # TODO: Ensure biomarker module is loaded to extract lower_leg_length.
+    df['lower_leg_length'] = np.nan
 
 # Family shocks
-df['child_died'] = np.random.choice([0, 1], size=len(df), p=[0.85, 0.15])
+# TODO: Extract child mortality from family_information module.
+# Requires identifying the correct variable for "child died in past 2 years".
+df['child_died'] = np.nan
 
 if 'da002' in df.columns:
     df['chronic_disease_count'] = pd.to_numeric(df['da002'], errors='coerce').fillna(0)
     df['chronic_disease'] = (df['chronic_disease_count'] > 0).astype(float)
 else:
-    df['chronic_disease_count'] = np.random.poisson(lam=1.5, size=len(df))
-    df['chronic_disease'] = (df['chronic_disease_count'] > 0).astype(float)
+    # TODO: Ensure health module is loaded for chronic disease data.
+    df['chronic_disease_count'] = np.nan
+    df['chronic_disease'] = np.nan
 
 if 'db001' in df.columns:
     df['adl_limit'] = (pd.to_numeric(df['db001'], errors='coerce') > 1).astype(float)
 else:
-    df['adl_limit'] = np.random.choice([0, 1], size=len(df), p=[0.9, 0.1])
+    # TODO: Ensure health module is loaded for ADL limitation data.
+    df['adl_limit'] = np.nan
 
 # Extract countyID from communityID (first 6 characters usually represent county in CHARLS)
 df['countyID'] = df['communityID'].astype(str).str[:6]

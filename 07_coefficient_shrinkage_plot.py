@@ -3,11 +3,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import os
+from pathlib import Path
 
-print("=== Phase 6: Coefficient Forest Plot Generation ===")
+print("=== Phase 7: Coefficient Forest Plot Generation ===")
 
-INP = "/Users/xiwen/.gemini/antigravity/scratch/intelligence/charls_replication/output/coefficient_shrinkage_data.csv"
-OUT = "/Users/xiwen/.gemini/antigravity/scratch/intelligence/charls_replication/output"
+PROJECT_DIR = Path(__file__).resolve().parent
+INP = str(PROJECT_DIR / "output/coefficient_shrinkage_data.csv")
+OUT = str(PROJECT_DIR / "output")
 
 df = pd.read_csv(INP)
 

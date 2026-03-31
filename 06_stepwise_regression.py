@@ -4,11 +4,13 @@ import statsmodels.api as sm
 from linearmodels import PanelOLS
 from linearmodels.panel.results import compare
 import os
+from pathlib import Path
 
-print("=== Phase 5: Stepwise Endogenous Regression (Tables 4-6) ===")
+print("=== Phase 6: Stepwise Endogenous Regression (Tables 4-6) ===")
 
-INP = "/Users/xiwen/.gemini/antigravity/scratch/intelligence/charls_replication/data/cleaned_charls_phase1.csv"
-OUT = "/Users/xiwen/.gemini/antigravity/scratch/intelligence/charls_replication/output"
+PROJECT_DIR = Path(__file__).resolve().parent
+INP = str(PROJECT_DIR / "data/cleaned_charls_phase1.csv")
+OUT = str(PROJECT_DIR / "output")
 os.makedirs(OUT, exist_ok=True)
 
 df = pd.read_csv(INP)

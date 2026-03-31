@@ -3,12 +3,14 @@ import statsmodels.formula.api as smf
 import matplotlib
 import matplotlib.pyplot as plt
 import os
+from pathlib import Path
 
 matplotlib.use('Agg')
-print("=== Phase 5B: Coefficient Plot ===")
+print("=== Phase 5: Coefficient Plot ===")
 
-INP = "/Users/xiwen/.gemini/antigravity/scratch/intelligence/charls_replication/data/cleaned_charls_phase1.csv"
-OUT = "/Users/xiwen/.gemini/antigravity/scratch/intelligence/charls_replication/output"
+PROJECT_DIR = Path(__file__).resolve().parent
+INP = str(PROJECT_DIR / "data/cleaned_charls_phase1.csv")
+OUT = str(PROJECT_DIR / "output")
 
 df = pd.read_csv(INP).dropna(subset=['cesd_score', 'female', 'communityID', 'age']).copy()
 
