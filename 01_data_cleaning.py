@@ -252,10 +252,16 @@ df['child_died'] = np.nan  # TODO: Identify exact variable in family_information
 # Recent widowed (derived from marital status change - proxied by current widowed status)
 # In cross-sectional baseline, we approximate using be002 (year became widowed)
 
-# Chronic disease (da002: number of chronic conditions diagnosed)
-if 'da002' in df.columns:
-    df['chronic_disease_count'] = pd.to_numeric(df['da002'], errors='coerce').fillna(0)
+# Chronic disease (da007_1_ through da007_14_: doctor-diagnosed conditions, 1=Yes, 2=No)
+chronic_cols = [f'da007_{i}_' for i in range(1, 15)]
+exist_chronic = [c for c in chronic_cols if c in df.columns]
+if exist_chronic:
+    for c in exist_chronic:
+        df[c] = pd.to_numeric(df[c], errors='coerce')
+    # Count conditions where response == 1 (has the condition)
+    df['chronic_disease_count'] = df[exist_chronic].apply(lambda row: (row == 1).sum(), axis=1)
     df['chronic_disease'] = (df['chronic_disease_count'] > 0).astype(float)
+    print(f"  Chronic disease: {df['chronic_disease'].mean()*100:.1f}% have at least one condition")
 else:
     df['chronic_disease_count'] = np.nan
     df['chronic_disease'] = np.nan
