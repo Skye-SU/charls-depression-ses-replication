@@ -14,19 +14,33 @@ OUT = str(PROJECT_DIR / "output")
 
 df = pd.read_csv(INP).dropna(subset=['cesd_score', 'female', 'communityID', 'age']).copy()
 
-controls = ['age', 'age_sq', 'female', 'edu_primary', 'edu_middle', 'edu_high', 'rural_hukou', 'married', 'widowed', 'log_pce', 'chronic_disease']
-valid_controls = [c for c in controls if c in df.columns]
+# Use age dummies + education + PCE + demographic controls (matching Table 3)
+controls = [
+    'age_50_54', 'age_55_59', 'age_60_64', 'age_65_69', 'age_70_74', 'age_75_plus',
+    'female', 'edu_can_read', 'edu_primary', 'edu_junior_high_plus',
+    'rural', 'married', 'widowed',
+    'log_pce_low', 'log_pce_high'
+]
+valid_controls = [c for c in controls if c in df.columns and df[c].notna().any()]
 
 formula = "cesd_score ~ " + " + ".join(valid_controls)
-model = smf.ols(formula, data=df).fit(cov_type='cluster', cov_kwds={'groups': df['communityID']})
+df_reg = df.dropna(subset=valid_controls + ['cesd_score']).copy()
+model = smf.ols(formula, data=df_reg).fit(cov_type='cluster', cov_kwds={'groups': df_reg['communityID']})
 
-# Extract coefficients
+# Extract coefficients for key SES variables
 params = model.params
 conf = model.conf_int()
 conf['coef'] = params
 
-vars_to_plot = ['edu_primary', 'edu_middle', 'edu_high', 'log_pce', 'female', 'rural_hukou', 'married']
-labels = ['Primary Edu', 'Middle Edu', 'High Edu+', 'Log PCE (Wealth Proxy)', 'Female', 'Rural Hukou', 'Married']
+# Variables to plot (Lei et al. key findings)
+vars_to_plot = [
+    'edu_can_read', 'edu_primary', 'edu_junior_high_plus',
+    'log_pce_low', 'female', 'rural', 'married'
+]
+labels = [
+    'Can Read/Write', 'Finished Primary', 'Junior High+',
+    'Log PCE (below median)', 'Female', 'Rural', 'Married'
+]
 
 plot_data = []
 for var, lab in zip(vars_to_plot, labels):
@@ -53,14 +67,14 @@ for i, row in enumerate(df_plot.itertuples()):
 ax.axvline(0, color='black', linestyle='--', linewidth=1)
 ax.set_yticks(range(len(df_plot)))
 ax.set_yticklabels(df_plot['label'], fontsize=11, fontweight='500', color='#333')
-ax.set_xlabel('Effect on CES-D 10 Score (OLS Coefficients)', fontsize=12, fontweight='bold', labelpad=10)
+ax.set_xlabel('Effect on CES-D 10 Score (OLS Coefficients, 95% CI)', fontsize=12, fontweight='bold', labelpad=10)
 
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.spines['left'].set_color('#DDDDDD')
 ax.spines['bottom'].set_color('#DDDDDD')
 
-plt.title('Figure 2: Determinants of Geriatric Depression\n(Community-Clustered 95% CIs)', fontsize=14, fontweight='bold', pad=20)
+plt.title('Figure 2: SES Determinants of Geriatric Depression\n(Community-Clustered 95% CIs, Lei et al. 2014 Replication)', fontsize=13, fontweight='bold', pad=20)
 plt.grid(axis='x', linestyle='--', alpha=0.3)
 
 plt.tight_layout()
@@ -68,4 +82,4 @@ fig_path = f"{OUT}/figure2_coefficient_plot.png"
 plt.savefig(fig_path, dpi=300, facecolor='#F8F9FA')
 plt.close()
 
-print(f"✅ Generated Coefficient plot at {fig_path}")
+print(f"✅ Phase 5 Complete! Coefficient plot saved to {fig_path}")

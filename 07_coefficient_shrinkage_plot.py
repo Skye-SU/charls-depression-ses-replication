@@ -20,7 +20,7 @@ sns.set_theme(style='darkgrid', palette='deep')
 # Custom palette for Models
 model_colors = {
     'Model 1 (Base)': '#4B9CD3',        # Base
-    'Model 2 (+Bio)': '#FFB81C',        # Step 1
+    'Model 2 (+Childhood)': '#FFB81C',  # Step 1
     'Model 3 (+Family)': '#E87722',     # Step 2
     'Model 4 (+Health)': '#E85B5B'      # Step 3
 }
@@ -36,8 +36,8 @@ for ax, gender in zip(axes, ['Male', 'Female']):
     # For a clean portfolio plot, let's track the shrinkage of Junior High Education (edu_middle)
     
     y_pos = np.arange(len(data))
-    coefs = data['edu_middle_coef'].values
-    errors = 1.96 * data['edu_middle_se'].values
+    coefs = data['edu_primary_coef'].values
+    errors = 1.96 * data['edu_primary_se'].values
     
     ax.set_facecolor('#1E1E1E')
     ax.grid(color='#333333', linestyle='--', linewidth=0.5)
@@ -61,9 +61,9 @@ for ax, gender in zip(axes, ['Male', 'Female']):
     ax.set_yticks(np.arange(len(data)))
     # Reverse so Base is at the top
     ax.set_yticklabels(data['Model'].values[::-1], color='white', fontsize=12)
-    ax.set_title(f'{gender} Sample: Effect of Junior High Education', fontsize=14, color='white', pad=15)
+    ax.set_title(f'{gender} Sample: Effect of Primary Education', fontsize=14, color='white', pad=15)
     
-    ax.set_xlabel('Coefficient on Middle School Education\n(Negative = Protective Effect against Depression)', color='white')
+    ax.set_xlabel('Coefficient on Finished Primary Education\n(Negative = Protective Effect against Depression)', color='white')
     ax.tick_params(colors='white')
 
     # Spines

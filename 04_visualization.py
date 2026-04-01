@@ -46,4 +46,4 @@ fig_path = f"{OUT}/figure1_cesd_histogram_final.png"
 plt.savefig(fig_path, dpi=300, bbox_inches='tight', facecolor='#F8F9FA')
 plt.close()
 
-print(f"✅ Phase 5 Complete! Visualization saved to {fig_path}")
+print(f"✅ Phase 4 Complete! Visualization saved to {fig_path}")
